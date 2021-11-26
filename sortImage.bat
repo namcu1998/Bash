@@ -2,7 +2,7 @@
 
 source $(pwd)/color.sh
 
-inPath="/sdcard/Download"
+inPath="/sdcard/anh"
 outPath="/sdcard/.folder_center"
 
 cd $inPath
@@ -57,7 +57,7 @@ filterImage() {
 		mv "${2}" ${outPath}/mobile_image
 	else
 #		echo 'watch'
-		
+		mv "${2}" ${outPath}/watch_image
 	fi
 }
 
