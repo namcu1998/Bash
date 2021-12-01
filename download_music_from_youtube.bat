@@ -2,7 +2,18 @@
 
 source $(pwd)/color.sh
 
+check_command() {
+	command=("ffmpeg" "yt-dlp")
+	for((cm=0; cm<${#command[@]}; cm++)) ; do
+		if ! [[ -x $(command -v ${command[$cm]}) ]] ; then
+			error "${command[$cm]} not installed"
+			exit
+		fi
+	done
+}
+
 checkSongExist() {
+	check_command
 	cd /sdcard/Music
 	Q "Enter song name: "
 	read  songName
@@ -38,7 +49,7 @@ downloadSong() {
 	checkInput "$url" downloadSong
 	checkUrl "$url" downloadSong
 	A "Download song from $url"
-	youtube-dl --ignore-errors --format bestaudio --extract-audio --audio-format mp3 --audio-quality 160K --output "%(title)s.%(ext)s" $url
+	yt-dlp  --format bestaudio --extract-audio --audio-format mp3 --audio-quality 160k  $url
 	clear
 	checkSongExist
 }
