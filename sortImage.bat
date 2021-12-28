@@ -2,7 +2,7 @@
 
 source $(pwd)/color.sh
 
-inPath=("/sdcard/Download" "/sdcard/Pictures/douyin")
+inPath=("/sdcard/Download")
 outPath="/sdcard/.folder_center"
 
 find_and_unzip() {
