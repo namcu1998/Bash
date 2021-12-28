@@ -3,6 +3,7 @@ source $(pwd)/color.sh
 
 path=("/sdcard" "/storage/44DC-1DF6/")
 name=("Bộ nhớ trong" "Thẻ nhớ")
+re='^[1-3]$'
 
 statusOfStorage() {
 	for((i=0; i<${#path[@]}; i++)) ; do
@@ -68,6 +69,11 @@ main() {
 	A "(3): Kiểm tra kích cỡ thư mục"
 	Q "Chọn phương án: "
 	read number
+
+	if ! [[ $number =~ $re ]] ; then
+		printf "Nhập số từ 1-3"
+		exit
+	fi
 
 	case $number in
 		1)
