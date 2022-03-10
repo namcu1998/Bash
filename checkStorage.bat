@@ -1,9 +1,18 @@
 #! /bin/bash
 source $(pwd)/color.sh
 
-path=("/sdcard" "/storage/44DC-1DF6/")
-name=("Bộ nhớ trong" "Thẻ nhớ")
+oldpath=("/sdcard" "/storage/44DC-1DF6/")
+oldname=("Bộ nhớ trong" "Thẻ nhớ")
 re='^[1-3]$'
+
+checkFolderExist() {
+	for ((i=0; i<${#oldpath[@]}; i++)) ; do
+		if [[ -d ${oldpath[$i]} ]] ; then
+			path+="${oldpath[$i]}"
+			name+="${oldname[$i]}"
+		fi
+	done
+}
 
 statusOfStorage() {
 	for((i=0; i<${#path[@]}; i++)) ; do
@@ -49,6 +58,7 @@ fileListOfTheLargest() {
 }
 
 folderSize() {
+	echo ${path[@]}
 	for((i=0; i<${#path[@]}; i++)) ; do
 		A "${name[$i]}"
 		cd ${path[$i]}
@@ -64,6 +74,8 @@ folderSize() {
 }
 
 main() {
+	A "Check folder exist"
+	checkFolderExist
 	A "(1): Kiểm tra tình trạng bộ nhớ"
 	A "(2): Tìm những tập tin có dung lượng lớn"
 	A "(3): Kiểm tra kích cỡ thư mục"
