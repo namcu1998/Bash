@@ -9,9 +9,9 @@ find_and_unzip() {
 
 	printf "${GREEN}Find zip file${RESET}\n"
 
-	mapfile -d '' lzf < <(sudo find -type f \
+	mapfile -d '' lzf < <(find -type f \
 	-iname "*Vì ai*" -print0)
-	mapfile -d '' lf < <(sudo find -type d \
+	mapfile -d '' lf < <(find -type d \
 	-name "*Vì ai*" -print0)
 
 	if (( ${#lzf[@]} > 0 && ${#lf[@]} == 0 )) ; then
