@@ -24,7 +24,7 @@ render_line() {
 	done
 }
 
-mapfile -d '' list_file < <(find -maxdepth 1  ! -name "sort.sh" ! -name "causation*" ! -name "reverse_causation*" ! -name "root*" -print0)
+mapfile -d '' list_file < <(find -maxdepth 1  ! -name "sort.sh" ! -name "sort*" ! -name "reverse_sort*" ! -name "root*" -print0)
 
 for ((i=0;i<${#list_file[@]};i++)) ; do
 	if [[ ${list_file[i]} != "." ]] ; then #Check folder isn't point
@@ -66,3 +66,17 @@ for ((i=0;i<${#list_file[@]};i++)) ; do
 	fi
 	
 done
+
+#reverse sort
+root="./root"
+
+if ! [[ -f ${root}/lastlog.txt ]] ; then
+	echo "Lastlog.txt file isn'texist"
+	exit
+fi
+
+while IFS= read -r file
+do
+	echo "${file}"
+	mv "${file}"  ~/Desktop
+done < "${root}/lastlog.txt"
