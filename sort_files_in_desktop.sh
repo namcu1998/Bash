@@ -16,17 +16,26 @@ elif ! [[ -f ${root}/lastlog.txt ]] ; then
 	touch ${root}/lastlog.txt
 fi
 
-rm ${root}/lastlog.txt -rf #delete lastlog.txt
-
 render_line() {
 	for ((c=0;c<=${number_of_dots};c++)) ; do
 		echo -n "="
 	done
 }
 
-mapfile -d '' list_file < <(find -maxdepth 1  ! -name "sort.sh" ! -name "sort*" ! -name "reverse_sort*" ! -name "root*" -print0)
+mapfile -d '' list_file < <(find -maxdepth 1  ! -name "sort.sh" ! -name "sort*" ! -name "*.ini" ! -name "reverse_sort*" ! -name "root*" -print0)
 
-for ((i=0;i<${#list_file[@]};i++)) ; do
+if [[ ${list_file[0]} == "." && ${#list_file[@]} == 1 ]] ; then 
+	echo "The desktop doesn't files or folders to sort" 
+	exit 
+fi
+
+find -maxdepth 1 -type d ! -name "root*" -empty -exec rm {} -rf \; #delete all empty folders
+
+find . -type d -emep
+
+rm ${root}/lastlog.txt  #delete lastlog.txt
+
+for (( i=0;i<${#list_file[@]};i++ )) ; do
 	if [[ ${list_file[i]} != "." ]] ; then #Check folder isn't point
 	
 		if [[ -d ${list_file[i]} ]] ; then #Check that is value folder or file?
