@@ -47,7 +47,7 @@ for (( i=0;i<${#list_file[@]};i++ )) ; do
 			fi
 			
 			if [[ -d ${root}/${folder_date}/folder/${folder_name} ]] ; then
-				echo -e "Folder was exist in this forder\nProceeding rename..."
+				echo -e "\n${folder_name} was exist in ${root}/${folder_date}/folder forder\nProceeding rename..." >> ${root}/log.txt
 				getDay=$(date +%d -r "${list_file[i]}")
 				finalName="${folder_name} - ${getDay}"
 			else
@@ -66,30 +66,27 @@ for (( i=0;i<${#list_file[@]};i++ )) ; do
 			file_date=$(date +__%m%y -r "${list_file[i]}"  | tr ' ' '\n' | head -n 2 | tail -1)
 			file_type=$(echo "${list_file[i]}" | tr '.' '\n' | tail -1)
 			file_name=$(echo "${list_file[i]}" | tr '/' '\n' | tail -1)
-			printf "%s\n" $(echo "${list_file[i]}" | tr '.' '\n' | tail -1)
+			len_Name=$((${#file_name} - ${#file_type} - 1))
+			onlyName=${file_name::len_Name}
 			
-
 			if ! [[ -d ${root}/${file_date}/${file_type} ]] ; then
 				echo -e "the folder doesn't exist\nCreate ${root}/${file_date}/${file_type} folder\n"
 				mkdir -p ${root}/${file_date}/${file_type}
 			fi
 			
 			if [[ -f ${root}/${file_date}/${file_type}/${file_name} ]] ; then
-				echo -e "Files was exist in this forder\nProceeding rename..."
+				echo -e "\n${file_name} was exist in path => ${root}/${file_date}/${file_type}\nProceeding rename..." >> ${root}/log.txt
 				getDay=$(date +%d -r "${list_file[i]}")
-				finalName="${file_name} - ${getDay}.${file_type}"
+				finalName="${onlyName} - ${getDay}.${file_type}"
+				echo -e "\nNew name: ${finalName}\n">> ${root}/log.txt
 			else
 				finalName=${file_name}
 			fi
 			
-			echo ${finalName}
+			echo -e "\n${finalName}\t${root}/${file_date}/${file_type}\t$(date -r "${list_file[i]}")" >> ${root}/log.txt
+			echo -e "${root}/${file_date}/${file_type}/${finalName}" >> ${root}/lastlog.txt
 			
-			exit
-			
-			echo -e "\n${file_name}\t${root}/${file_date}/${file_type}\t$(date -r "${list_file[i]}")" >> ${root}/log.txt
-			echo -e "${root}/${file_date}/${file_type}/${file_name}" >> ${root}/lastlog.txt
-			
-			mv "${list_file[i]}" ${root}/${file_date}/${file_type}
+			mv "${list_file[i]}" "${root}/${file_date}/${file_type}/${finalName}"
 			render_line >> ${root}/log.txt
 			
 		fi
