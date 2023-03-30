@@ -47,9 +47,10 @@ for (( i=0;i<${#list_file[@]};i++ )) ; do
 			fi
 			
 			if [[ -d ${root}/${folder_date}/folder/${folder_name} ]] ; then
-				echo -e "\n${folder_name} was exist in ${root}/${folder_date}/folder forder\nProceeding rename..." >> ${root}/log.txt
+				echo -e "\n${folder_name} was exist in ${root}/${folder_date}/folder forder\n\nProceeding rename..." >> ${root}/log.txt
 				getDay=$(date +%d -r "${list_file[i]}")
 				finalName="${folder_name} - ${getDay}"
+				echo -e "\nNew name: ${finalName}\n">> ${root}/log.txt
 			else
 				finalName=${folder_name}
 			fi
@@ -75,7 +76,7 @@ for (( i=0;i<${#list_file[@]};i++ )) ; do
 			fi
 			
 			if [[ -f ${root}/${file_date}/${file_type}/${file_name} ]] ; then
-				echo -e "\n${file_name} was exist in path => ${root}/${file_date}/${file_type}\nProceeding rename..." >> ${root}/log.txt
+				echo -e "\n${file_name} was exist in path => ${root}/${file_date}/${file_type}\n\nProceeding rename..." >> ${root}/log.txt
 				getDay=$(date +%d -r "${list_file[i]}")
 				finalName="${onlyName} - ${getDay}.${file_type}"
 				echo -e "\nNew name: ${finalName}\n">> ${root}/log.txt
