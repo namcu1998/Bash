@@ -2,18 +2,21 @@ root="./root"
 
 number_of_dots=100
 
+currentDate=$(date +%Y%m%d)
+nameLog="20230404 - log.txt" #${currentDate}
+
 if ! [[ -d ${root} ]] ; then #Check and init root folder
 	mkdir ${root}
+elif ! [[ -d ${root}/LogHistory ]] ; then
+	echo "LogHistory folder isn't exist"
+	echo "Creating..."
+	mkdir ${root}/LogHistory 
 fi
 
 if ! [[ -f ${root}/log.txt ]] ; then #Check and init files require
 	echo "Log.txt file isn't exist"
 	echo "Creating..."
 	touch ${root}/log.txt
-elif ! [[ -f ${root}/lastlog.txt ]] ; then
-	echo "Lastlog.txt file isn't exist"
-	echo "Creating..."
-	touch ${root}/lastlog.txt
 fi
 
 render_line() {
@@ -22,17 +25,23 @@ render_line() {
 	done
 }
 
-mapfile -d '' list_file < <(find -maxdepth 1  ! -name "sort.sh" ! -name "sort*" ! -name "*.ini" ! -name "reverse_sort*" ! -name "root*" -print0)
+find -maxdepth 1 -type d ! -name "root*" -empty -delete #delete all empty folders
+
+mapfile -d '' list_file < <(find -maxdepth 1  \
+! -name "causation.sh" ! -name "*.ini" ! -name "reverse_causation.sh" \
+! -name "root*" ! -name "Server*" ! -name "flask_admin*" \
+-print0)
 
 if [[ ${list_file[0]} == "." && ${#list_file[@]} == 1 ]] ; then 
 	echo "The desktop doesn't files or folders to sort" 
 	exit 
 fi
 
-find -maxdepth 1 -type d ! -name "root*" -empty -exec rm {} -rf \; #delete all empty folders
-
-
-rm ${root}/lastlog.txt  #delete lastlog.txt
+if ! [[ -f ${root}/LogHistory/${nameLog} ]] ; then #Check and init DayLog
+	echo "${nameLog}  file isn't exist"
+	echo "Creating..."
+	touch "${root}/LogHistory/${nameLog}"
+fi
 
 for (( i=0;i<${#list_file[@]};i++ )) ; do
 	if [[ ${list_file[i]} != "." ]] ; then #Check folder isn't point
@@ -47,10 +56,9 @@ for (( i=0;i<${#list_file[@]};i++ )) ; do
 			fi
 			
 			if [[ -d ${root}/${folder_date}/folder/${folder_name} ]] ; then
-				echo -e "\n${folder_name} was exist in ${root}/${folder_date}/folder forder\n\nProceeding rename..." >> ${root}/log.txt
+				echo -e "\n${folder_name} was exist in ${root}/${folder_date}/folder forder\nProceeding rename..." >> ${root}/log.txt
 				getDay=$(date +%d -r "${list_file[i]}")
 				finalName="${folder_name} - ${getDay}"
-				echo -e "\nNew name: ${finalName}\n">> ${root}/log.txt
 			else
 				finalName=${folder_name}
 			fi
@@ -58,7 +66,7 @@ for (( i=0;i<${#list_file[@]};i++ )) ; do
 			echo ${finalName}
 
 			echo -e "\n${folder_name}\t${root}/${folder_date}/folder/${finalName}\t$(date -r "${list_file[i]}")" >> ${root}/log.txt
-			echo -e "${root}/${folder_date}/folder/${finalName}" >> ${root}/lastlog.txt
+			echo -e "${root}/${folder_date}/folder/${finalName}" >> "${root}/LogHistory/${nameLog}"
 			mv "${list_file[i]}" "${root}/${folder_date}/folder/${finalName}"
 			render_line >> ${root}/log.txt
 			
@@ -76,7 +84,7 @@ for (( i=0;i<${#list_file[@]};i++ )) ; do
 			fi
 			
 			if [[ -f ${root}/${file_date}/${file_type}/${file_name} ]] ; then
-				echo -e "\n${file_name} was exist in path => ${root}/${file_date}/${file_type}\n\nProceeding rename..." >> ${root}/log.txt
+				echo -e "\n${file_name} was exist in path => ${root}/${file_date}/${file_type}\nProceeding rename..." >> ${root}/log.txt
 				getDay=$(date +%d -r "${list_file[i]}")
 				finalName="${onlyName} - ${getDay}.${file_type}"
 				echo -e "\nNew name: ${finalName}\n">> ${root}/log.txt
@@ -85,7 +93,7 @@ for (( i=0;i<${#list_file[@]};i++ )) ; do
 			fi
 			
 			echo -e "\n${finalName}\t${root}/${file_date}/${file_type}\t$(date -r "${list_file[i]}")" >> ${root}/log.txt
-			echo -e "${root}/${file_date}/${file_type}/${finalName}" >> ${root}/lastlog.txt
+			echo -e "${root}/${file_date}/${file_type}/${finalName}" >> "${root}/LogHistory/${nameLog}"
 			
 			mv "${list_file[i]}" "${root}/${file_date}/${file_type}/${finalName}"
 			render_line >> ${root}/log.txt
@@ -98,13 +106,21 @@ done
 #reverse sort
 root="./root"
 
-if ! [[ -f ${root}/lastlog.txt ]] ; then
-	echo "Lastlog.txt file isn'texist"
-	exit
-fi
+mapfile -d "" array < <(find ${root}/LogHistory -type f -name "*.txt" -print0)
+
+for (( i=0;i<${#array[@]};i++ )) ; do
+		year=${array[$i]:18:4}
+		month=${array[$i]:22:2}
+		day=${array[$i]:24:2}
+		echo -e "${i}: ${day} - ${month} - ${year}"
+done
+
+read -p "Chose date to reverse_causation:" result
+
+echo -e "\nProceed reverse_causation on ${array[${result}]}\n"
 
 while IFS= read -r file
 do
 	echo "${file}"
 	mv "${file}"  ~/Desktop
-done < "${root}/lastlog.txt"
+done < "${array[${result}]}"
