@@ -1,4 +1,4 @@
-root="./root"
+root="$(pwd)/root"
 
 number_of_dots=100
 
