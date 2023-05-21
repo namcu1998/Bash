@@ -7,7 +7,7 @@ nameLog="20230404 - log.txt" #${currentDate}
 
 if ! [[ -d ${root} ]] ; then #Check and init root folder
 	mkdir ${root}
-elif ! [[ -d ${root}/LogHistory ]] ; then
+if ! [[ -d ${root}/LogHistory ]] ; then
 	echo "LogHistory folder isn't exist"
 	echo "Creating..."
 	mkdir ${root}/LogHistory 
