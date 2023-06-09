@@ -36,13 +36,13 @@ sort() {
 	find ${__location} -maxdepth 1 -type d ! -name "root*" -empty -delete #delete all empty folders
 
 	mapfile -d '' list_file < <(find ${__location} -maxdepth 1  \
-	! -name "sort.sh" ! -name "*.ini" ! -name "reverse_causation.sh" \
-	! -name "root*" ! -name "Server*" ! -name "flask_admin*" \
+	! -name "sort.sh" ! -name "*.ini" ! -name "COMMENT_MAINTENANCE.txt" ! -name "Daily report - Nam.xlsx" ! -name "root.lnk" \
+	! -name "root*" ! -name "Server*" ! -name "flask_admin*"  ! -name "abc"  ! -name "Python_Exam" \
 	-print0)
 
 	if [[ ${list_file[0]} == ${__location} && ${#list_file[@]} == 1 ]] ; then 
 		echo "The desktop doesn't files or folders to sort" 
-		exit 
+		return
 	fi
 
 	if ! [[ -f ${root}/LogHistory/${nameLog} ]] ; then #Check and init DayLog
@@ -117,6 +117,7 @@ sort() {
 }
 
 for (( i=0;i<${#INPUT_DIR[@]};i++ )) ; do
+	echo -e "Sort at ${i}"
 	if [[ -d ${INPUT_DIR[i]} ]] ; then
 		sort ${INPUT_DIR[i]}
 	fi 
